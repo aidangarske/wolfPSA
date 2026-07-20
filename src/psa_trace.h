@@ -28,6 +28,9 @@
 
 static inline void wolfpsa_trace(const char* fmt, ...)
 {
+#if defined(WOLFPSA_NO_TRACE)
+    (void)fmt;
+#else
     const char* enabled = getenv("WOLFPSA_TRACE");
     va_list args;
 
@@ -40,6 +43,7 @@ static inline void wolfpsa_trace(const char* fmt, ...)
     vfprintf(stderr, fmt, args);
     fputc('\n', stderr);
     va_end(args);
+#endif
 }
 
 #endif /* WOLFPSA_PSA_TRACE_H */
