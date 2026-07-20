@@ -875,6 +875,15 @@ static inline int psa_key_id_is_null(psa_key_id_t key)
 #define WOLFPSA_SVC_KEY_ID_GET_KEY_ID(id)   ((id).key_id)
 #define WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(id) ((id).owner)
 
+/* Platform/builtin keys sit at the top of the PSA vendor range and are shared
+ * across clients (owner agnostic), matching the PSA builtin key convention. */
+#ifndef WOLFPSA_KEY_ID_BUILTIN_MIN
+#define WOLFPSA_KEY_ID_BUILTIN_MIN ((psa_key_id_t) 0x7fff0000)
+#endif
+#ifndef WOLFPSA_KEY_ID_BUILTIN_MAX
+#define WOLFPSA_KEY_ID_BUILTIN_MAX ((psa_key_id_t) 0x7fffefff)
+#endif
+
 static inline wolfpsa_svc_key_id_t wolfpsa_svc_key_id_make(
     wolfpsa_key_owner_id_t owner, psa_key_id_t key_id)
 {

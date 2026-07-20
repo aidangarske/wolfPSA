@@ -271,15 +271,32 @@ static int wolfpsa_usage_flags_valid(psa_key_usage_t usage)
 static wolfpsa_volatile_key_node* wolfpsa_volatile_find(wolfpsa_svc_key_id_t key_id)
 {
     wolfpsa_volatile_key_node* cur = g_volatile_keys;
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+    wolfpsa_volatile_key_node* builtin = NULL;
+    psa_key_id_t unqualified = WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id);
+#endif
 
     while (cur != NULL) {
         if (wolfpsa_svc_key_id_equal(cur->id, key_id)) {
             return cur;
         }
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+        if ((builtin == NULL)
+            && (unqualified >= WOLFPSA_KEY_ID_BUILTIN_MIN)
+            && (unqualified <= WOLFPSA_KEY_ID_BUILTIN_MAX)
+            && (WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(cur->id) == 0)
+            && (WOLFPSA_SVC_KEY_ID_GET_KEY_ID(cur->id) == unqualified)) {
+            builtin = cur;
+        }
+#endif
         cur = cur->next;
     }
 
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+    return builtin;
+#else
     return NULL;
+#endif
 }
 
 static psa_status_t wolfpsa_volatile_store(wolfpsa_svc_key_id_t key_id,
