@@ -690,8 +690,15 @@ static psa_status_t wolfpsa_aead_decrypt_final(wolfpsa_aead_ctx_t *ctx,
     int ret;
     const uint8_t *input;
     const uint8_t *aad;
+    uint8_t dummy[1];
+    uint8_t *out;
 
-    if (plaintext == NULL || plaintext_length == NULL || tag == NULL) {
+    if (plaintext_length == NULL || tag == NULL) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
+    /* Verify-only decrypt (GCM/CCM used as a MAC) authenticates AAD with no
+     * ciphertext, so a NULL plaintext buffer is valid when nothing is output. */
+    if (plaintext == NULL && ctx->input_length != 0) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
@@ -726,6 +733,8 @@ static psa_status_t wolfpsa_aead_decrypt_final(wolfpsa_aead_ctx_t *ctx,
 
     input = wolfpsa_aead_nonnull_data(ctx->input, ctx->input_length);
     aad = wolfpsa_aead_nonnull_data(ctx->aad, ctx->aad_length);
+    /* wolfCrypt wants a non-NULL output pointer even when nothing is written. */
+    out = (plaintext != NULL) ? plaintext : dummy;
 
     if (PSA_ALG_AEAD_EQUAL(ctx->alg, PSA_ALG_GCM)) {
 #ifdef HAVE_AESGCM
@@ -735,7 +744,7 @@ static psa_status_t wolfpsa_aead_decrypt_final(wolfpsa_aead_ctx_t *ctx,
             ret = wc_AesGcmSetKey(&aes, ctx->key, (word32)ctx->key_length);
         }
         if (ret == 0) {
-            ret = wc_AesGcmDecrypt(&aes, plaintext, input,
+            ret = wc_AesGcmDecrypt(&aes, out, input,
                                    (word32)ctx->input_length,
                                    ctx->nonce, (word32)ctx->nonce_length,
                                    tag, (word32)tag_length,
@@ -764,7 +773,7 @@ static psa_status_t wolfpsa_aead_decrypt_final(wolfpsa_aead_ctx_t *ctx,
             ret = wc_AesCcmSetKey(&aes, ctx->key, (word32)ctx->key_length);
         }
         if (ret == 0) {
-            ret = wc_AesCcmDecrypt(&aes, plaintext, input,
+            ret = wc_AesCcmDecrypt(&aes, out, input,
                                    (word32)ctx->input_length,
                                    ctx->nonce, (word32)ctx->nonce_length,
                                    tag, (word32)tag_length,
@@ -803,7 +812,7 @@ static psa_status_t wolfpsa_aead_decrypt_final(wolfpsa_aead_ctx_t *ctx,
                                             ctx->nonce, ctx->nonce_length,
                                             aad, ctx->aad_length,
                                             tmp, ciphertext_len,
-                                            plaintext, plaintext_size, &out_len);
+                                            out, plaintext_size, &out_len);
         wc_ForceZero(tmp, ciphertext_len);
         XFREE(tmp, NULL, DYNAMIC_TYPE_TMP_BUFFER);
         if (ret != 0) {
