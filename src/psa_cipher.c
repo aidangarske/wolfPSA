@@ -547,6 +547,8 @@ psa_status_t psa_cipher_decrypt_setup(psa_cipher_operation_t *operation,
             ret = wc_AesCtrSetKey(&ctx->aes, key_data, (word32)key_data_length,
                                   ctx->iv, AES_ENCRYPTION);
         }
+        /* These are stream modes: the block cipher runs forward to make the
+         * keystream, so the key is set for encryption even when decrypting. */
         else
 #endif
         if (alg == PSA_ALG_CCM_STAR_NO_TAG || alg == PSA_ALG_OFB ||

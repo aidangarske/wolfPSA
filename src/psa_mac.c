@@ -106,8 +106,10 @@ static int wolfpsa_hash_type_from_alg(psa_algorithm_t alg)
     switch (hash_alg) {
         case PSA_ALG_MD5:
             return WC_HASH_TYPE_MD5;
+#ifndef NO_SHA
         case PSA_ALG_SHA_1:
             return WC_HASH_TYPE_SHA;
+#endif
         case PSA_ALG_SHA_224:
             return WC_HASH_TYPE_SHA224;
         case PSA_ALG_SHA_256:
