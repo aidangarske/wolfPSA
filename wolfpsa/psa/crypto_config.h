@@ -24,7 +24,8 @@
 
 
 /* Hashes */
-#define PSA_WANT_ALG_SHA_1
+/* SHA-1 is deprecated; enable explicitly if wolfCrypt provides it. */
+/* #define PSA_WANT_ALG_SHA_1 */
 #define PSA_WANT_ALG_SHA_224
 #define PSA_WANT_ALG_SHA_256
 #define PSA_WANT_ALG_SHA_384
