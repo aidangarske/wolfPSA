@@ -250,7 +250,7 @@ static int wolfpsa_sign_alg_permitted(psa_algorithm_t key_alg,
     return 0;
 }
 
-static psa_status_t wolfpsa_asymmetric_check_key(psa_key_id_t key,
+static psa_status_t wolfpsa_asymmetric_check_key(wolfpsa_svc_key_id_t key,
                                                  psa_key_usage_t usage,
                                                  psa_algorithm_t alg,
                                                  psa_key_attributes_t *attributes,
@@ -349,7 +349,7 @@ static psa_status_t wolfpsa_check_context(psa_algorithm_t alg,
     return PSA_ERROR_INVALID_ARGUMENT;
 }
 
-psa_status_t psa_asymmetric_encrypt(psa_key_id_t key,
+psa_status_t psa_asymmetric_encrypt(wolfpsa_svc_key_id_t key,
                                    psa_algorithm_t alg,
                                    const uint8_t *input,
                                    size_t input_length,
@@ -394,7 +394,7 @@ psa_status_t psa_asymmetric_encrypt(psa_key_id_t key,
     return status;
 }
 
-psa_status_t psa_asymmetric_decrypt(psa_key_id_t key,
+psa_status_t psa_asymmetric_decrypt(wolfpsa_svc_key_id_t key,
                                    psa_algorithm_t alg,
                                    const uint8_t *input,
                                    size_t input_length,
@@ -440,7 +440,7 @@ psa_status_t psa_asymmetric_decrypt(psa_key_id_t key,
 }
 
 /* Internal worker: sign a pre-computed hash, with optional context. */
-static psa_status_t wolfpsa_sign_hash_worker(psa_key_id_t key,
+static psa_status_t wolfpsa_sign_hash_worker(wolfpsa_svc_key_id_t key,
                                              psa_algorithm_t alg,
                                              const uint8_t *hash,
                                              size_t hash_length,
@@ -568,7 +568,7 @@ static psa_status_t wolfpsa_sign_hash_worker(psa_key_id_t key,
 
 /* Internal worker: verify a signature over a pre-computed hash, with optional
  * context. */
-static psa_status_t wolfpsa_verify_hash_worker(psa_key_id_t key,
+static psa_status_t wolfpsa_verify_hash_worker(wolfpsa_svc_key_id_t key,
                                                psa_algorithm_t alg,
                                                const uint8_t *hash,
                                                size_t hash_length,
@@ -685,7 +685,7 @@ static psa_status_t wolfpsa_verify_hash_worker(psa_key_id_t key,
     return status;
 }
 
-psa_status_t psa_sign_hash(psa_key_id_t key,
+psa_status_t psa_sign_hash(wolfpsa_svc_key_id_t key,
                            psa_algorithm_t alg,
                            const uint8_t *hash,
                            size_t hash_length,
@@ -694,14 +694,14 @@ psa_status_t psa_sign_hash(psa_key_id_t key,
                            size_t *signature_length)
 {
     wolfpsa_trace("psa_sign_hash(key=%u alg=0x%08x hash_len=%zu)",
-                  (unsigned)key, (unsigned)alg, hash_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, hash_length);
     return wolfpsa_sign_hash_worker(key, alg, hash, hash_length,
                                     NULL, 0,
                                     signature, signature_size,
                                     signature_length);
 }
 
-psa_status_t psa_verify_hash(psa_key_id_t key,
+psa_status_t psa_verify_hash(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *hash,
                              size_t hash_length,
@@ -709,13 +709,13 @@ psa_status_t psa_verify_hash(psa_key_id_t key,
                              size_t signature_length)
 {
     wolfpsa_trace("psa_verify_hash(key=%u alg=0x%08x hash_len=%zu sig_len=%zu)",
-                  (unsigned)key, (unsigned)alg, hash_length, signature_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, hash_length, signature_length);
     return wolfpsa_verify_hash_worker(key, alg, hash, hash_length,
                                       NULL, 0,
                                       signature, signature_length);
 }
 
-psa_status_t psa_sign_hash_with_context(psa_key_id_t key,
+psa_status_t psa_sign_hash_with_context(wolfpsa_svc_key_id_t key,
                                         psa_algorithm_t alg,
                                         const uint8_t *hash,
                                         size_t hash_length,
@@ -726,14 +726,14 @@ psa_status_t psa_sign_hash_with_context(psa_key_id_t key,
                                         size_t *signature_length)
 {
     wolfpsa_trace("psa_sign_hash_with_context(key=%u alg=0x%08x hash_len=%zu ctx_len=%zu)",
-                  (unsigned)key, (unsigned)alg, hash_length, context_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, hash_length, context_length);
     return wolfpsa_sign_hash_worker(key, alg, hash, hash_length,
                                     context, context_length,
                                     signature, signature_size,
                                     signature_length);
 }
 
-psa_status_t psa_verify_hash_with_context(psa_key_id_t key,
+psa_status_t psa_verify_hash_with_context(wolfpsa_svc_key_id_t key,
                                           psa_algorithm_t alg,
                                           const uint8_t *hash,
                                           size_t hash_length,
@@ -743,7 +743,7 @@ psa_status_t psa_verify_hash_with_context(psa_key_id_t key,
                                           size_t signature_length)
 {
     wolfpsa_trace("psa_verify_hash_with_context(key=%u alg=0x%08x hash_len=%zu ctx_len=%zu)",
-                  (unsigned)key, (unsigned)alg, hash_length, context_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, hash_length, context_length);
     return wolfpsa_verify_hash_worker(key, alg, hash, hash_length,
                                       context, context_length,
                                       signature, signature_length);
@@ -751,7 +751,7 @@ psa_status_t psa_verify_hash_with_context(psa_key_id_t key,
 
 /* Internal worker: sign a message (hash-then-sign or pure EdDSA/ML-DSA),
  * with optional context. */
-static psa_status_t wolfpsa_sign_message_worker(psa_key_id_t key,
+static psa_status_t wolfpsa_sign_message_worker(wolfpsa_svc_key_id_t key,
                                                 psa_algorithm_t alg,
                                                 const uint8_t *input,
                                                 size_t input_length,
@@ -959,7 +959,7 @@ cleanup:
 }
 
 /* Internal worker: verify a signature over a message, with optional context. */
-static psa_status_t wolfpsa_verify_message_worker(psa_key_id_t key,
+static psa_status_t wolfpsa_verify_message_worker(wolfpsa_svc_key_id_t key,
                                                   psa_algorithm_t alg,
                                                   const uint8_t *input,
                                                   size_t input_length,
@@ -1190,7 +1190,7 @@ cleanup:
     return status;
 }
 
-psa_status_t psa_sign_message(psa_key_id_t key,
+psa_status_t psa_sign_message(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *input,
                               size_t input_length,
@@ -1204,7 +1204,7 @@ psa_status_t psa_sign_message(psa_key_id_t key,
                                        signature_length);
 }
 
-psa_status_t psa_verify_message(psa_key_id_t key,
+psa_status_t psa_verify_message(wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg,
                                 const uint8_t *input,
                                 size_t input_length,
@@ -1216,7 +1216,7 @@ psa_status_t psa_verify_message(psa_key_id_t key,
                                          signature, signature_length);
 }
 
-psa_status_t psa_sign_message_with_context(psa_key_id_t key,
+psa_status_t psa_sign_message_with_context(wolfpsa_svc_key_id_t key,
                                            psa_algorithm_t alg,
                                            const uint8_t *input,
                                            size_t input_length,
@@ -1227,14 +1227,14 @@ psa_status_t psa_sign_message_with_context(psa_key_id_t key,
                                            size_t *signature_length)
 {
     wolfpsa_trace("psa_sign_message_with_context(key=%u alg=0x%08x in_len=%zu ctx_len=%zu)",
-                  (unsigned)key, (unsigned)alg, input_length, context_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, input_length, context_length);
     return wolfpsa_sign_message_worker(key, alg, input, input_length,
                                        context, context_length,
                                        signature, signature_size,
                                        signature_length);
 }
 
-psa_status_t psa_verify_message_with_context(psa_key_id_t key,
+psa_status_t psa_verify_message_with_context(wolfpsa_svc_key_id_t key,
                                              psa_algorithm_t alg,
                                              const uint8_t *input,
                                              size_t input_length,
@@ -1244,7 +1244,7 @@ psa_status_t psa_verify_message_with_context(psa_key_id_t key,
                                              size_t signature_length)
 {
     wolfpsa_trace("psa_verify_message_with_context(key=%u alg=0x%08x in_len=%zu ctx_len=%zu)",
-                  (unsigned)key, (unsigned)alg, input_length, context_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, input_length, context_length);
     return wolfpsa_verify_message_worker(key, alg, input, input_length,
                                          context, context_length,
                                          signature, signature_length);
@@ -1258,7 +1258,7 @@ psa_status_t psa_verify_message_with_context(psa_key_id_t key,
  * psa_raw_key_agreement(), psa_key_agreement() and
  * psa_key_derivation_key_agreement(). */
 psa_status_t wolfpsa_key_agreement_secret(psa_algorithm_t alg,
-                                          psa_key_id_t private_key,
+                                          wolfpsa_svc_key_id_t private_key,
                                           const uint8_t *peer_key,
                                           size_t peer_key_length,
                                           uint8_t *output,
@@ -1402,7 +1402,7 @@ psa_status_t wolfpsa_key_agreement_secret(psa_algorithm_t alg,
 }
 
 psa_status_t psa_raw_key_agreement(psa_algorithm_t alg,
-                                   psa_key_id_t private_key,
+                                   wolfpsa_svc_key_id_t private_key,
                                    const uint8_t *peer_key,
                                    size_t peer_key_length,
                                    uint8_t *output,
@@ -1410,7 +1410,7 @@ psa_status_t psa_raw_key_agreement(psa_algorithm_t alg,
                                    size_t *output_length)
 {
     wolfpsa_trace("psa_raw_key_agreement(alg=0x%08x key=%u peer_len=%zu)",
-                  (unsigned)alg, (unsigned)private_key, peer_key_length);
+                  (unsigned)alg, (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(private_key), peer_key_length);
 
     if (output == NULL || output_length == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
@@ -1424,12 +1424,12 @@ psa_status_t psa_raw_key_agreement(psa_algorithm_t alg,
                                         output_length);
 }
 
-psa_status_t psa_key_agreement(psa_key_id_t private_key,
+psa_status_t psa_key_agreement(wolfpsa_svc_key_id_t private_key,
                                const uint8_t *peer_key,
                                size_t peer_key_length,
                                psa_algorithm_t alg,
                                const psa_key_attributes_t *attributes,
-                               psa_key_id_t *key)
+                               wolfpsa_svc_key_id_t *key)
 {
     uint8_t *secret = NULL;
     size_t secret_len;
@@ -1442,7 +1442,7 @@ psa_status_t psa_key_agreement(psa_key_id_t private_key,
     if (attributes == NULL || key == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
-    *key = PSA_KEY_ID_NULL;
+    *key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
 
     if (!PSA_ALG_IS_KEY_AGREEMENT(alg)) {
         return PSA_ERROR_NOT_SUPPORTED;

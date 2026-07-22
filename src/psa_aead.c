@@ -109,7 +109,7 @@ static int wolfpsa_aead_gcm_check_tag_size(size_t tag_length)
 }
 #endif
 
-static psa_status_t wolfpsa_aead_check_key(psa_key_id_t key,
+static psa_status_t wolfpsa_aead_check_key(wolfpsa_svc_key_id_t key,
                                            psa_key_usage_t usage,
                                            psa_algorithm_t alg,
                                            psa_key_attributes_t *attributes,
@@ -211,7 +211,7 @@ static psa_status_t wolfpsa_aead_check_key(psa_key_id_t key,
 }
 
 static psa_status_t wolfpsa_aead_setup(psa_aead_operation_t *operation,
-                                       psa_key_id_t key,
+                                       wolfpsa_svc_key_id_t key,
                                        psa_algorithm_t alg,
                                        psa_key_usage_t usage)
 {
@@ -324,14 +324,14 @@ static psa_status_t wolfpsa_aead_setup(psa_aead_operation_t *operation,
 }
 
 psa_status_t psa_aead_encrypt_setup(psa_aead_operation_t *operation,
-                                    psa_key_id_t key,
+                                    wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg)
 {
     return wolfpsa_aead_setup(operation, key, alg, PSA_KEY_USAGE_ENCRYPT);
 }
 
 psa_status_t psa_aead_decrypt_setup(psa_aead_operation_t *operation,
-                                    psa_key_id_t key,
+                                    wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg)
 {
     return wolfpsa_aead_setup(operation, key, alg, PSA_KEY_USAGE_DECRYPT);
@@ -1264,7 +1264,7 @@ static psa_status_t wolfpsa_ascon_oneshot_decrypt(
 }
 #endif /* HAVE_ASCON */
 
-psa_status_t psa_aead_encrypt(psa_key_id_t key,
+psa_status_t psa_aead_encrypt(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *nonce,
                               size_t nonce_length,
@@ -1355,7 +1355,7 @@ psa_status_t psa_aead_encrypt(psa_key_id_t key,
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_aead_decrypt(psa_key_id_t key,
+psa_status_t psa_aead_decrypt(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *nonce,
                               size_t nonce_length,

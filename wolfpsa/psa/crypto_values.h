@@ -862,6 +862,61 @@ static inline int psa_key_id_is_null(psa_key_id_t key)
     return key == PSA_KEY_ID_NULL;
 }
 
+/* See WOLFPSA_KEY_ID_ENCODES_OWNER in crypto_types.h. */
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+
+#define WOLFPSA_SVC_KEY_ID_INIT { 0, 0 }
+#define WOLFPSA_SVC_KEY_ID_GET_KEY_ID(id)   ((id).key_id)
+#define WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(id) ((id).owner)
+
+static inline wolfpsa_svc_key_id_t wolfpsa_svc_key_id_make(
+    wolfpsa_key_owner_id_t owner, psa_key_id_t key_id)
+{
+    wolfpsa_svc_key_id_t svc;
+
+    svc.key_id = key_id;
+    svc.owner = owner;
+    return svc;
+}
+
+/* Both halves must match: the same key id from two clients is two keys. */
+static inline int wolfpsa_svc_key_id_equal(wolfpsa_svc_key_id_t id1,
+                                            wolfpsa_svc_key_id_t id2)
+{
+    return (id1.key_id == id2.key_id) && (id1.owner == id2.owner);
+}
+
+static inline int wolfpsa_svc_key_id_is_null(wolfpsa_svc_key_id_t key)
+{
+    return (key.key_id == PSA_KEY_ID_NULL) && (key.owner == 0);
+}
+
+#else
+
+#define WOLFPSA_SVC_KEY_ID_INIT PSA_KEY_ID_NULL
+#define WOLFPSA_SVC_KEY_ID_GET_KEY_ID(id)   (id)
+#define WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(id) (0)
+
+static inline wolfpsa_svc_key_id_t wolfpsa_svc_key_id_make(int32_t owner,
+                                                            psa_key_id_t key_id)
+{
+    (void)owner;
+    return key_id;
+}
+
+static inline int wolfpsa_svc_key_id_equal(wolfpsa_svc_key_id_t id1,
+                                            wolfpsa_svc_key_id_t id2)
+{
+    return id1 == id2;
+}
+
+static inline int wolfpsa_svc_key_id_is_null(wolfpsa_svc_key_id_t key)
+{
+    return key == PSA_KEY_ID_NULL;
+}
+
+#endif /* WOLFPSA_KEY_ID_ENCODES_OWNER */
+
 
 
 

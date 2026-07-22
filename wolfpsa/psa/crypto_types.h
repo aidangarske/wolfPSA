@@ -46,9 +46,25 @@ typedef uint8_t psa_pake_family_t;
 typedef uint8_t psa_pake_role_t;
 typedef uint8_t psa_pake_step_t;
 
+/* Per-client key namespaces for multi-client services. Off: plain psa_key_id_t. */
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+
+typedef int32_t wolfpsa_key_owner_id_t;
+
+typedef struct {
+    psa_key_id_t           key_id;
+    wolfpsa_key_owner_id_t owner;
+} wolfpsa_svc_key_id_t;
+
+#else
+
+typedef psa_key_id_t wolfpsa_svc_key_id_t;
+
+#endif /* WOLFPSA_KEY_ID_ENCODES_OWNER */
+
 typedef struct psa_key_attributes_s psa_key_attributes_t;
 typedef struct psa_custom_key_parameters_s psa_custom_key_parameters_t;
 typedef struct psa_pake_cipher_suite_s psa_pake_cipher_suite_t;
 typedef struct psa_pake_operation_s psa_pake_operation_t;
 
-#endif 
+#endif

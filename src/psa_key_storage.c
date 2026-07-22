@@ -56,7 +56,7 @@ static int g_key_storage_initialized = 0;
 static psa_key_id_t g_next_key_id = PSA_KEY_ID_VENDOR_MIN;
 
 typedef struct wolfpsa_volatile_key_node {
-    psa_key_id_t id;
+    wolfpsa_svc_key_id_t id;
     psa_key_attributes_t attributes;
     uint8_t* data;
     size_t data_length;
@@ -268,12 +268,12 @@ static int wolfpsa_usage_flags_valid(psa_key_usage_t usage)
     return (usage & ~mask) == 0;
 }
 
-static wolfpsa_volatile_key_node* wolfpsa_volatile_find(psa_key_id_t key_id)
+static wolfpsa_volatile_key_node* wolfpsa_volatile_find(wolfpsa_svc_key_id_t key_id)
 {
     wolfpsa_volatile_key_node* cur = g_volatile_keys;
 
     while (cur != NULL) {
-        if (cur->id == key_id) {
+        if (wolfpsa_svc_key_id_equal(cur->id, key_id)) {
             return cur;
         }
         cur = cur->next;
@@ -282,7 +282,7 @@ static wolfpsa_volatile_key_node* wolfpsa_volatile_find(psa_key_id_t key_id)
     return NULL;
 }
 
-static psa_status_t wolfpsa_volatile_store(psa_key_id_t key_id,
+static psa_status_t wolfpsa_volatile_store(wolfpsa_svc_key_id_t key_id,
                                            const psa_key_attributes_t* attributes,
                                            const uint8_t* data,
                                            size_t data_length)
@@ -321,13 +321,13 @@ static psa_status_t wolfpsa_volatile_store(psa_key_id_t key_id,
     return PSA_SUCCESS;
 }
 
-static psa_status_t wolfpsa_volatile_remove(psa_key_id_t key_id)
+static psa_status_t wolfpsa_volatile_remove(wolfpsa_svc_key_id_t key_id)
 {
     wolfpsa_volatile_key_node* cur = g_volatile_keys;
     wolfpsa_volatile_key_node* prev = NULL;
 
     while (cur != NULL) {
-        if (cur->id == key_id) {
+        if (wolfpsa_svc_key_id_equal(cur->id, key_id)) {
             if (prev != NULL) {
                 prev->next = cur->next;
             }
@@ -349,7 +349,7 @@ static psa_status_t wolfpsa_volatile_remove(psa_key_id_t key_id)
     return PSA_ERROR_INVALID_HANDLE;
 }
 
-static psa_status_t wolfpsa_volatile_get(psa_key_id_t key_id,
+static psa_status_t wolfpsa_volatile_get(wolfpsa_svc_key_id_t key_id,
                                         psa_key_attributes_t* attributes,
                                         uint8_t** key_data,
                                         size_t* key_data_length)
@@ -388,7 +388,7 @@ static psa_status_t wolfpsa_volatile_get(psa_key_id_t key_id,
     return PSA_SUCCESS;
 }
 
-static psa_status_t wolfpsa_volatile_get_attributes(psa_key_id_t key_id,
+static psa_status_t wolfpsa_volatile_get_attributes(wolfpsa_svc_key_id_t key_id,
                                                     psa_key_attributes_t* attributes)
 {
     wolfpsa_volatile_key_node* node;
@@ -826,7 +826,7 @@ static psa_status_t psa_key_attributes_deserialize(
     return PSA_SUCCESS;
 }
 
-psa_status_t wolfpsa_get_key_data(psa_key_id_t key_id,
+psa_status_t wolfpsa_get_key_data(wolfpsa_svc_key_id_t key_id,
                                  psa_key_attributes_t* attributes,
                                  uint8_t** key_data,
                                  size_t* key_data_length)
@@ -860,7 +860,7 @@ psa_status_t wolfpsa_get_key_data(psa_key_id_t key_id,
                   sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
                   sizeof(psa_key_lifetime_t);
 
-    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)key_id, 0, 1, &store);
+    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(key_id), 1, &store);
     if (ret == -4) {
         return PSA_ERROR_INVALID_HANDLE;
     }
@@ -923,7 +923,7 @@ psa_status_t psa_import_key(
     const psa_key_attributes_t* attributes,
     const uint8_t* data,
     size_t data_length,
-    psa_key_id_t* key_id)
+    wolfpsa_svc_key_id_t* key_id)
 {
     wolfpsa_trace("psa_import_key(type=0x%08x bits=%u data_len=%zu)",
                   attributes ? (unsigned)attributes->type : 0U,
@@ -944,7 +944,7 @@ psa_status_t psa_import_key(
     }
 
     /* Always treat key_id as output-only. */
-    *key_id = PSA_KEY_ID_NULL;
+    *key_id = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
 
     /* Reject lengths that do not fit the int-based storage API or that would
      * overflow the serialized buffer_size computation below. */
@@ -1155,8 +1155,10 @@ psa_status_t psa_import_key(
     }
     
     {
-        psa_key_id_t attr_id = (psa_key_id_t)psa_get_key_id(&attr);
-        if (attr_id != PSA_KEY_ID_NULL) {
+        wolfpsa_svc_key_id_t attr_id = psa_get_key_id(&attr);
+        /* Test the id half only: a service sets the owner but leaves the id
+         * zero to ask for one to be allocated. */
+        if (WOLFPSA_SVC_KEY_ID_GET_KEY_ID(attr_id) != PSA_KEY_ID_NULL) {
             *key_id = attr_id;
         }
         else {
@@ -1169,7 +1171,9 @@ psa_status_t psa_import_key(
                 g_next_key_id > PSA_KEY_ID_VENDOR_MAX) {
                 return PSA_ERROR_INSUFFICIENT_STORAGE;
             }
-            *key_id = g_next_key_id++;
+            *key_id = wolfpsa_svc_key_id_make(
+                          WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(attr_id),
+                          g_next_key_id++);
         }
     }
 
@@ -1221,7 +1225,7 @@ psa_status_t psa_import_key(
         }
 
         /* Open and write key to persistent storage */
-        ret = wolfPSA_Store_OpenSz(WOLFPSA_STORE_KEY, (unsigned long)*key_id, 0,
+        ret = wolfPSA_Store_OpenSz(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(*key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(*key_id),
                                   0, (int)data_length, &store);
         if (ret == 0) {
             ret = wolfPSA_Store_Write(store, buffer,
@@ -1240,7 +1244,7 @@ psa_status_t psa_import_key(
     }
     
     if (ret < 0 || (size_t)ret != (attr_length + sizeof(size_t) + data_length)) {
-        *key_id = PSA_KEY_ID_NULL;
+        *key_id = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
         return PSA_ERROR_STORAGE_FAILURE;
     }
     
@@ -1250,7 +1254,7 @@ psa_status_t psa_import_key(
 /* Generate a key and store it in the PSA key storage */
 psa_status_t psa_generate_key(
     const psa_key_attributes_t* attributes,
-    psa_key_id_t* key_id)
+    wolfpsa_svc_key_id_t* key_id)
 {
     wolfpsa_trace("psa_generate_key(type=0x%08x bits=%u)",
                   attributes ? (unsigned)attributes->type : 0U,
@@ -1507,12 +1511,12 @@ psa_status_t psa_generate_key(
 }
 
 /* Destroy a key from the PSA key storage */
-psa_status_t psa_destroy_key(psa_key_id_t key_id)
+psa_status_t psa_destroy_key(wolfpsa_svc_key_id_t key_id)
 {
     psa_status_t status;
     int ret;
 
-    if (key_id == PSA_KEY_ID_NULL) {
+    if (wolfpsa_svc_key_id_is_null(key_id)) {
         return PSA_SUCCESS;
     }
     
@@ -1528,7 +1532,7 @@ psa_status_t psa_destroy_key(psa_key_id_t key_id)
     }
 
     /* Remove key from persistent storage */
-    ret = wolfPSA_Store_Remove(WOLFPSA_STORE_KEY, (unsigned long)key_id, 0);
+    ret = wolfPSA_Store_Remove(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(key_id));
     if (ret == -4) {
         return PSA_ERROR_INVALID_HANDLE;
     }
@@ -1541,7 +1545,7 @@ psa_status_t psa_destroy_key(psa_key_id_t key_id)
 
 /* Export a key from the PSA key storage */
 psa_status_t psa_export_key(
-    psa_key_id_t key_id,
+    wolfpsa_svc_key_id_t key_id,
     uint8_t* data,
     size_t data_size,
     size_t* data_length)
@@ -1607,7 +1611,7 @@ psa_status_t psa_export_key(
                  sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
                  sizeof(psa_key_lifetime_t);
     
-    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)key_id, 0, 1, &store);
+    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(key_id), 1, &store);
     if (ret == -4) {
         return PSA_ERROR_INVALID_HANDLE;
     }
@@ -1653,12 +1657,12 @@ psa_status_t psa_export_key(
 
 /* Export a public key from the PSA key storage */
 psa_status_t psa_export_public_key(
-    psa_key_id_t key_id,
+    wolfpsa_svc_key_id_t key_id,
     uint8_t* data,
     size_t data_size,
     size_t* data_length)
 {
-    wolfpsa_trace("psa_export_public_key(key=%u)", (unsigned)key_id);
+    wolfpsa_trace("psa_export_public_key(key=%u)", (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id));
     psa_status_t status;
     uint8_t header[sizeof(psa_key_type_t) + sizeof(psa_key_bits_t) +
                    sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
@@ -1717,7 +1721,7 @@ psa_status_t psa_export_public_key(
                       sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
                       sizeof(psa_key_lifetime_t);
 
-        ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)key_id, 0, 1,
+        ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(key_id), 1,
                                  &store);
         if (ret == -4) {
             return PSA_ERROR_INVALID_HANDLE;
@@ -1990,7 +1994,7 @@ psa_status_t psa_export_public_key(
 
 /* Get key attributes from the PSA key storage */
 psa_status_t psa_get_key_attributes(
-    psa_key_id_t key_id,
+    wolfpsa_svc_key_id_t key_id,
     psa_key_attributes_t* attributes)
 {
     psa_status_t status;
@@ -2021,7 +2025,7 @@ psa_status_t psa_get_key_attributes(
                   sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
                   sizeof(psa_key_lifetime_t);
 
-    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)key_id, 0, 1, &store);
+    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key_id), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(key_id), 1, &store);
     if (ret == -4) {
         return PSA_ERROR_INVALID_HANDLE;
     }
@@ -2043,9 +2047,9 @@ psa_status_t psa_get_key_attributes(
 
 /* Copy a key in the PSA key storage */
 psa_status_t psa_copy_key(
-    psa_key_id_t source_key,
+    wolfpsa_svc_key_id_t source_key,
     const psa_key_attributes_t* attributes,
-    psa_key_id_t* target_key)
+    wolfpsa_svc_key_id_t* target_key)
 {
     psa_status_t status;
     uint8_t header[sizeof(psa_key_type_t) + sizeof(psa_key_bits_t) +
@@ -2123,7 +2127,7 @@ psa_status_t psa_copy_key(
                  sizeof(psa_key_usage_t) + sizeof(psa_algorithm_t) +
                  sizeof(psa_key_lifetime_t);
     
-    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)source_key, 0, 1, &store);
+    ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(source_key), (unsigned long)WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(source_key), 1, &store);
     if (ret == -4) {
         return PSA_ERROR_INVALID_HANDLE;
     }

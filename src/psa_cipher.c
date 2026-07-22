@@ -152,7 +152,7 @@ static size_t wolfpsa_cipher_iv_length(psa_algorithm_t alg,
 }
 
 static psa_status_t wolfpsa_cipher_check_key(
-    psa_key_id_t key,
+    wolfpsa_svc_key_id_t key,
     psa_key_usage_t usage,
     psa_algorithm_t alg,
     psa_key_attributes_t *attributes,
@@ -296,7 +296,7 @@ static psa_status_t wolfpsa_cipher_check_key(
 }
 
 psa_status_t psa_cipher_encrypt_setup(psa_cipher_operation_t *operation,
-                                     psa_key_id_t key,
+                                     wolfpsa_svc_key_id_t key,
                                      psa_algorithm_t alg)
 {
     wolfpsa_cipher_ctx_t *ctx;
@@ -312,7 +312,7 @@ psa_status_t psa_cipher_encrypt_setup(psa_cipher_operation_t *operation,
     }
 
     wolfpsa_trace("psa_cipher_encrypt_setup(key=%u alg=0x%08x)",
-                  (unsigned)key, (unsigned)alg);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg);
     if (operation->opaque != (uintptr_t)NULL) {
         return PSA_ERROR_BAD_STATE;
     }
@@ -439,7 +439,7 @@ psa_status_t psa_cipher_encrypt_setup(psa_cipher_operation_t *operation,
 }
 
 psa_status_t psa_cipher_decrypt_setup(psa_cipher_operation_t *operation,
-                                     psa_key_id_t key,
+                                     wolfpsa_svc_key_id_t key,
                                      psa_algorithm_t alg)
 {
     wolfpsa_cipher_ctx_t *ctx;
@@ -455,7 +455,7 @@ psa_status_t psa_cipher_decrypt_setup(psa_cipher_operation_t *operation,
     }
 
     wolfpsa_trace("psa_cipher_decrypt_setup(key=%u alg=0x%08x)",
-                  (unsigned)key, (unsigned)alg);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg);
     if (operation->opaque != (uintptr_t)NULL) {
         return PSA_ERROR_BAD_STATE;
     }
@@ -1462,7 +1462,7 @@ psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_cipher_encrypt(psa_key_id_t key,
+psa_status_t psa_cipher_encrypt(wolfpsa_svc_key_id_t key,
                                psa_algorithm_t alg,
                                const uint8_t *input,
                                size_t input_length,
@@ -1524,7 +1524,7 @@ psa_status_t psa_cipher_encrypt(psa_key_id_t key,
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_cipher_decrypt(psa_key_id_t key,
+psa_status_t psa_cipher_decrypt(wolfpsa_svc_key_id_t key,
                                psa_algorithm_t alg,
                                const uint8_t *input,
                                size_t input_length,

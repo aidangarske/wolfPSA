@@ -125,7 +125,7 @@ static int wolfpsa_hash_type_from_alg(psa_algorithm_t alg)
     }
 }
 
-static psa_status_t wolfpsa_mac_check_key(psa_key_id_t key,
+static psa_status_t wolfpsa_mac_check_key(wolfpsa_svc_key_id_t key,
                                           psa_key_usage_t usage,
                                           psa_algorithm_t alg,
                                           psa_key_attributes_t *attributes,
@@ -238,7 +238,7 @@ static psa_status_t wolfpsa_mac_check_key(psa_key_id_t key,
 }
 
 static psa_status_t wolfpsa_mac_setup(psa_mac_operation_t *operation,
-                                      psa_key_id_t key,
+                                      wolfpsa_svc_key_id_t key,
                                       psa_algorithm_t alg,
                                       psa_key_usage_t usage)
 {
@@ -351,14 +351,14 @@ static psa_status_t wolfpsa_mac_setup(psa_mac_operation_t *operation,
 }
 
 psa_status_t psa_mac_sign_setup(psa_mac_operation_t *operation,
-                                psa_key_id_t key,
+                                wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg)
 {
     return wolfpsa_mac_setup(operation, key, alg, PSA_KEY_USAGE_SIGN_MESSAGE);
 }
 
 psa_status_t psa_mac_verify_setup(psa_mac_operation_t *operation,
-                                  psa_key_id_t key,
+                                  wolfpsa_svc_key_id_t key,
                                   psa_algorithm_t alg)
 {
     return wolfpsa_mac_setup(operation, key, alg, PSA_KEY_USAGE_VERIFY_MESSAGE);
@@ -571,7 +571,7 @@ psa_status_t psa_mac_abort(psa_mac_operation_t *operation)
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_mac_compute(psa_key_id_t key,
+psa_status_t psa_mac_compute(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *input,
                              size_t input_length,
@@ -602,7 +602,7 @@ psa_status_t psa_mac_compute(psa_key_id_t key,
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_mac_verify(psa_key_id_t key,
+psa_status_t psa_mac_verify(wolfpsa_svc_key_id_t key,
                             psa_algorithm_t alg,
                             const uint8_t *input,
                             size_t input_length,

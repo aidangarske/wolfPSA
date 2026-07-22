@@ -68,7 +68,7 @@ void psa_pake_cs_set_key_confirmation(psa_pake_cipher_suite_t *cipher_suite,
     (void)key_confirmation;
 }
 
-psa_status_t psa_pake_get_shared_key(psa_pake_operation_t *operation, const psa_key_attributes_t *attributes, psa_key_id_t *key) {
+psa_status_t psa_pake_get_shared_key(psa_pake_operation_t *operation, const psa_key_attributes_t *attributes, wolfpsa_svc_key_id_t *key) {
     (void)operation;
     (void)attributes;
     (void)key;
@@ -119,14 +119,14 @@ psa_status_t psa_pake_set_user(psa_pake_operation_t *operation, const uint8_t *u
     return wolfPSA_StubNotSupported();
 }
 
-psa_status_t psa_pake_setup(psa_pake_operation_t *operation, psa_key_id_t password_key, const psa_pake_cipher_suite_t *cipher_suite) {
+psa_status_t psa_pake_setup(psa_pake_operation_t *operation, wolfpsa_svc_key_id_t password_key, const psa_pake_cipher_suite_t *cipher_suite) {
     (void)operation;
     (void)password_key;
     (void)cipher_suite;
     return wolfPSA_StubNotSupported();
 }
 
-psa_status_t psa_purge_key(psa_key_id_t key) {
+psa_status_t psa_purge_key(wolfpsa_svc_key_id_t key) {
     (void)key;
     return wolfPSA_StubNotSupported();
 }

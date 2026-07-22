@@ -696,7 +696,7 @@ psa_status_t psa_key_derivation_input_integer(psa_key_derivation_operation_t *op
 
 psa_status_t psa_key_derivation_input_key(psa_key_derivation_operation_t *operation,
                                           psa_key_derivation_step_t step,
-                                          psa_key_id_t key)
+                                          wolfpsa_svc_key_id_t key)
 {
     wolfpsa_kdf_ctx_t *ctx = wolfpsa_kdf_get_ctx(operation);
     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -772,7 +772,7 @@ psa_status_t psa_key_derivation_input_key(psa_key_derivation_operation_t *operat
 
 psa_status_t psa_key_derivation_key_agreement(psa_key_derivation_operation_t *operation,
                                               psa_key_derivation_step_t step,
-                                              psa_key_id_t private_key,
+                                              wolfpsa_svc_key_id_t private_key,
                                               const uint8_t *peer_key,
                                               size_t peer_key_length)
 {
@@ -1716,7 +1716,7 @@ psa_status_t psa_key_derivation_output_bytes(psa_key_derivation_operation_t *ope
 
 psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attributes,
                                            psa_key_derivation_operation_t *operation,
-                                           psa_key_id_t *key)
+                                           wolfpsa_svc_key_id_t *key)
 {
     size_t key_len;
     uint8_t *buffer;
@@ -1796,7 +1796,7 @@ psa_status_t psa_key_derivation_verify_bytes(psa_key_derivation_operation_t *ope
 }
 
 psa_status_t psa_key_derivation_verify_key(psa_key_derivation_operation_t *operation,
-                                           psa_key_id_t expected)
+                                           wolfpsa_svc_key_id_t expected)
 {
     uint8_t *expected_data = NULL;
     size_t expected_length = 0;

@@ -75,26 +75,26 @@ WOLFSSL_API void psa_key_storage_cleanup(void);
 WOLFSSL_API psa_status_t psa_import_key(const psa_key_attributes_t* attributes,
                                        const uint8_t* data,
                                        size_t data_length,
-                                       psa_key_id_t* key_id);
+                                       wolfpsa_svc_key_id_t* key_id);
 WOLFSSL_API psa_status_t psa_generate_key(const psa_key_attributes_t* attributes,
-                                         psa_key_id_t* key_id);
-WOLFSSL_API psa_status_t psa_destroy_key(psa_key_id_t key_id);
-WOLFSSL_API psa_status_t psa_export_key(psa_key_id_t key_id,
+                                         wolfpsa_svc_key_id_t* key_id);
+WOLFSSL_API psa_status_t psa_destroy_key(wolfpsa_svc_key_id_t key_id);
+WOLFSSL_API psa_status_t psa_export_key(wolfpsa_svc_key_id_t key_id,
                                        uint8_t* data,
                                        size_t data_size,
                                        size_t* data_length);
-WOLFSSL_API psa_status_t psa_export_public_key(psa_key_id_t key_id,
+WOLFSSL_API psa_status_t psa_export_public_key(wolfpsa_svc_key_id_t key_id,
                                               uint8_t* data,
                                               size_t data_size,
                                               size_t* data_length);
-WOLFSSL_API psa_status_t psa_get_key_attributes(psa_key_id_t key_id,
+WOLFSSL_API psa_status_t psa_get_key_attributes(wolfpsa_svc_key_id_t key_id,
                                                psa_key_attributes_t* attributes);
-WOLFSSL_API psa_status_t psa_copy_key(psa_key_id_t source_key,
+WOLFSSL_API psa_status_t psa_copy_key(wolfpsa_svc_key_id_t source_key,
                                      const psa_key_attributes_t* attributes,
-                                     psa_key_id_t* target_key);
+                                     wolfpsa_svc_key_id_t* target_key);
 
 /* Internal helper to fetch raw key material from storage */
-WOLFSSL_API psa_status_t wolfpsa_get_key_data(psa_key_id_t key_id,
+WOLFSSL_API psa_status_t wolfpsa_get_key_data(wolfpsa_svc_key_id_t key_id,
                                              psa_key_attributes_t* attributes,
                                              uint8_t** key_data,
                                              size_t* key_data_length);

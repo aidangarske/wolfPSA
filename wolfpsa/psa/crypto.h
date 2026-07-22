@@ -58,12 +58,12 @@ psa_status_t psa_crypto_init(void);
 static psa_key_attributes_t psa_key_attributes_init(void);
 
 static void psa_set_key_id(psa_key_attributes_t *attributes,
-                           psa_key_id_t key);
+                           wolfpsa_svc_key_id_t key);
 
 static void psa_set_key_lifetime(psa_key_attributes_t *attributes,
                                  psa_key_lifetime_t lifetime);
 
-static psa_key_id_t psa_get_key_id(const psa_key_attributes_t *attributes);
+static wolfpsa_svc_key_id_t psa_get_key_id(const psa_key_attributes_t *attributes);
 
 static psa_key_lifetime_t psa_get_key_lifetime(
     const psa_key_attributes_t *attributes);
@@ -91,35 +91,35 @@ static psa_key_type_t psa_get_key_type(const psa_key_attributes_t *attributes);
 
 static size_t psa_get_key_bits(const psa_key_attributes_t *attributes);
 
-psa_status_t psa_get_key_attributes(psa_key_id_t key,
+psa_status_t psa_get_key_attributes(wolfpsa_svc_key_id_t key,
                                     psa_key_attributes_t *attributes);
 
 void psa_reset_key_attributes(psa_key_attributes_t *attributes);
 
-psa_status_t psa_purge_key(psa_key_id_t key);
+psa_status_t psa_purge_key(wolfpsa_svc_key_id_t key);
 
 /* Check whether a key supports a given algorithm and usage combination. */
-psa_status_t psa_check_key_usage(psa_key_id_t key,
+psa_status_t psa_check_key_usage(wolfpsa_svc_key_id_t key,
                                  psa_algorithm_t alg,
                                  psa_key_usage_t usage);
 
-psa_status_t psa_copy_key(psa_key_id_t source_key,
+psa_status_t psa_copy_key(wolfpsa_svc_key_id_t source_key,
                           const psa_key_attributes_t *attributes,
-                          psa_key_id_t *target_key);
+                          wolfpsa_svc_key_id_t *target_key);
 
-psa_status_t psa_destroy_key(psa_key_id_t key);
+psa_status_t psa_destroy_key(wolfpsa_svc_key_id_t key);
 
 psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
                             const uint8_t *data,
                             size_t data_length,
-                            psa_key_id_t *key);
+                            wolfpsa_svc_key_id_t *key);
 
-psa_status_t psa_export_key(psa_key_id_t key,
+psa_status_t psa_export_key(wolfpsa_svc_key_id_t key,
                             uint8_t *data,
                             size_t data_size,
                             size_t *data_length);
 
-psa_status_t psa_export_public_key(psa_key_id_t key,
+psa_status_t psa_export_public_key(wolfpsa_svc_key_id_t key,
                                    uint8_t *data,
                                    size_t data_size,
                                    size_t *data_length);
@@ -192,7 +192,7 @@ psa_status_t psa_xof_output(psa_xof_operation_t *operation,
 
 psa_status_t psa_xof_abort(psa_xof_operation_t *operation);
 
-psa_status_t psa_mac_compute(psa_key_id_t key,
+psa_status_t psa_mac_compute(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *input,
                              size_t input_length,
@@ -200,7 +200,7 @@ psa_status_t psa_mac_compute(psa_key_id_t key,
                              size_t mac_size,
                              size_t *mac_length);
 
-psa_status_t psa_mac_verify(psa_key_id_t key,
+psa_status_t psa_mac_verify(wolfpsa_svc_key_id_t key,
                             psa_algorithm_t alg,
                             const uint8_t *input,
                             size_t input_length,
@@ -211,11 +211,11 @@ psa_status_t psa_mac_verify(psa_key_id_t key,
 static psa_mac_operation_t psa_mac_operation_init(void);
 
 psa_status_t psa_mac_sign_setup(psa_mac_operation_t *operation,
-                                psa_key_id_t key,
+                                wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg);
 
 psa_status_t psa_mac_verify_setup(psa_mac_operation_t *operation,
-                                  psa_key_id_t key,
+                                  wolfpsa_svc_key_id_t key,
                                   psa_algorithm_t alg);
 
 psa_status_t psa_mac_update(psa_mac_operation_t *operation,
@@ -233,7 +233,7 @@ psa_status_t psa_mac_verify_finish(psa_mac_operation_t *operation,
 
 psa_status_t psa_mac_abort(psa_mac_operation_t *operation);
 
-psa_status_t psa_cipher_encrypt(psa_key_id_t key,
+psa_status_t psa_cipher_encrypt(wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg,
                                 const uint8_t *input,
                                 size_t input_length,
@@ -241,7 +241,7 @@ psa_status_t psa_cipher_encrypt(psa_key_id_t key,
                                 size_t output_size,
                                 size_t *output_length);
 
-psa_status_t psa_cipher_decrypt(psa_key_id_t key,
+psa_status_t psa_cipher_decrypt(wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg,
                                 const uint8_t *input,
                                 size_t input_length,
@@ -253,11 +253,11 @@ psa_status_t psa_cipher_decrypt(psa_key_id_t key,
 static psa_cipher_operation_t psa_cipher_operation_init(void);
 
 psa_status_t psa_cipher_encrypt_setup(psa_cipher_operation_t *operation,
-                                      psa_key_id_t key,
+                                      wolfpsa_svc_key_id_t key,
                                       psa_algorithm_t alg);
 
 psa_status_t psa_cipher_decrypt_setup(psa_cipher_operation_t *operation,
-                                      psa_key_id_t key,
+                                      wolfpsa_svc_key_id_t key,
                                       psa_algorithm_t alg);
 
 psa_status_t psa_cipher_generate_iv(psa_cipher_operation_t *operation,
@@ -283,7 +283,7 @@ psa_status_t psa_cipher_finish(psa_cipher_operation_t *operation,
 
 psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation);
 
-psa_status_t psa_aead_encrypt(psa_key_id_t key,
+psa_status_t psa_aead_encrypt(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *nonce,
                               size_t nonce_length,
@@ -295,7 +295,7 @@ psa_status_t psa_aead_encrypt(psa_key_id_t key,
                               size_t ciphertext_size,
                               size_t *ciphertext_length);
 
-psa_status_t psa_aead_decrypt(psa_key_id_t key,
+psa_status_t psa_aead_decrypt(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *nonce,
                               size_t nonce_length,
@@ -311,11 +311,11 @@ psa_status_t psa_aead_decrypt(psa_key_id_t key,
 static psa_aead_operation_t psa_aead_operation_init(void);
 
 psa_status_t psa_aead_encrypt_setup(psa_aead_operation_t *operation,
-                                    psa_key_id_t key,
+                                    wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg);
 
 psa_status_t psa_aead_decrypt_setup(psa_aead_operation_t *operation,
-                                    psa_key_id_t key,
+                                    wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg);
 
 psa_status_t psa_aead_generate_nonce(psa_aead_operation_t *operation,
@@ -359,7 +359,7 @@ psa_status_t psa_aead_verify(psa_aead_operation_t *operation,
 
 psa_status_t psa_aead_abort(psa_aead_operation_t *operation);
 
-psa_status_t psa_sign_message(psa_key_id_t key,
+psa_status_t psa_sign_message(wolfpsa_svc_key_id_t key,
                               psa_algorithm_t alg,
                               const uint8_t *input,
                               size_t input_length,
@@ -367,14 +367,14 @@ psa_status_t psa_sign_message(psa_key_id_t key,
                               size_t signature_size,
                               size_t *signature_length);
 
-psa_status_t psa_verify_message(psa_key_id_t key,
+psa_status_t psa_verify_message(wolfpsa_svc_key_id_t key,
                                 psa_algorithm_t alg,
                                 const uint8_t *input,
                                 size_t input_length,
                                 const uint8_t *signature,
                                 size_t signature_length);
 
-psa_status_t psa_sign_hash(psa_key_id_t key,
+psa_status_t psa_sign_hash(wolfpsa_svc_key_id_t key,
                            psa_algorithm_t alg,
                            const uint8_t *hash,
                            size_t hash_length,
@@ -382,7 +382,7 @@ psa_status_t psa_sign_hash(psa_key_id_t key,
                            size_t signature_size,
                            size_t *signature_length);
 
-psa_status_t psa_verify_hash(psa_key_id_t key,
+psa_status_t psa_verify_hash(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *hash,
                              size_t hash_length,
@@ -390,7 +390,7 @@ psa_status_t psa_verify_hash(psa_key_id_t key,
                              size_t signature_length);
 
 /* PSA 1.4: sign/verify with an explicit context string (e.g. Ed25519ctx). */
-psa_status_t psa_sign_message_with_context(psa_key_id_t key,
+psa_status_t psa_sign_message_with_context(wolfpsa_svc_key_id_t key,
                                            psa_algorithm_t alg,
                                            const uint8_t *input,
                                            size_t input_length,
@@ -400,7 +400,7 @@ psa_status_t psa_sign_message_with_context(psa_key_id_t key,
                                            size_t signature_size,
                                            size_t *signature_length);
 
-psa_status_t psa_verify_message_with_context(psa_key_id_t key,
+psa_status_t psa_verify_message_with_context(wolfpsa_svc_key_id_t key,
                                              psa_algorithm_t alg,
                                              const uint8_t *input,
                                              size_t input_length,
@@ -409,7 +409,7 @@ psa_status_t psa_verify_message_with_context(psa_key_id_t key,
                                              const uint8_t *signature,
                                              size_t signature_length);
 
-psa_status_t psa_sign_hash_with_context(psa_key_id_t key,
+psa_status_t psa_sign_hash_with_context(wolfpsa_svc_key_id_t key,
                                         psa_algorithm_t alg,
                                         const uint8_t *hash,
                                         size_t hash_length,
@@ -419,7 +419,7 @@ psa_status_t psa_sign_hash_with_context(psa_key_id_t key,
                                         size_t signature_size,
                                         size_t *signature_length);
 
-psa_status_t psa_verify_hash_with_context(psa_key_id_t key,
+psa_status_t psa_verify_hash_with_context(wolfpsa_svc_key_id_t key,
                                           psa_algorithm_t alg,
                                           const uint8_t *hash,
                                           size_t hash_length,
@@ -428,7 +428,7 @@ psa_status_t psa_verify_hash_with_context(psa_key_id_t key,
                                           const uint8_t *signature,
                                           size_t signature_length);
 
-psa_status_t psa_asymmetric_encrypt(psa_key_id_t key,
+psa_status_t psa_asymmetric_encrypt(wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg,
                                     const uint8_t *input,
                                     size_t input_length,
@@ -438,7 +438,7 @@ psa_status_t psa_asymmetric_encrypt(psa_key_id_t key,
                                     size_t output_size,
                                     size_t *output_length);
 
-psa_status_t psa_asymmetric_decrypt(psa_key_id_t key,
+psa_status_t psa_asymmetric_decrypt(wolfpsa_svc_key_id_t key,
                                     psa_algorithm_t alg,
                                     const uint8_t *input,
                                     size_t input_length,
@@ -478,12 +478,12 @@ psa_status_t psa_key_derivation_input_integer(
 psa_status_t psa_key_derivation_input_key(
     psa_key_derivation_operation_t *operation,
     psa_key_derivation_step_t step,
-    psa_key_id_t key);
+    wolfpsa_svc_key_id_t key);
 
 psa_status_t psa_key_derivation_key_agreement(
     psa_key_derivation_operation_t *operation,
     psa_key_derivation_step_t step,
-    psa_key_id_t private_key,
+    wolfpsa_svc_key_id_t private_key,
     const uint8_t *peer_key,
     size_t peer_key_length);
 
@@ -495,7 +495,7 @@ psa_status_t psa_key_derivation_output_bytes(
 psa_status_t psa_key_derivation_output_key(
     const psa_key_attributes_t *attributes,
     psa_key_derivation_operation_t *operation,
-    psa_key_id_t *key);
+    wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_key_derivation_output_key_custom(
     const psa_key_attributes_t *attributes,
@@ -503,7 +503,7 @@ psa_status_t psa_key_derivation_output_key_custom(
     const psa_custom_key_parameters_t *custom,
     const uint8_t *custom_data,
     size_t custom_data_length,
-    psa_key_id_t *key);
+    wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_key_derivation_verify_bytes(
     psa_key_derivation_operation_t *operation,
@@ -512,25 +512,25 @@ psa_status_t psa_key_derivation_verify_bytes(
 
 psa_status_t psa_key_derivation_verify_key(
     psa_key_derivation_operation_t *operation,
-    psa_key_id_t expected);
+    wolfpsa_svc_key_id_t expected);
 
 psa_status_t psa_key_derivation_abort(
     psa_key_derivation_operation_t *operation);
 
 psa_status_t psa_raw_key_agreement(psa_algorithm_t alg,
-                                   psa_key_id_t private_key,
+                                   wolfpsa_svc_key_id_t private_key,
                                    const uint8_t *peer_key,
                                    size_t peer_key_length,
                                    uint8_t *output,
                                    size_t output_size,
                                    size_t *output_length);
 
-psa_status_t psa_key_agreement(psa_key_id_t private_key,
+psa_status_t psa_key_agreement(wolfpsa_svc_key_id_t private_key,
                                const uint8_t *peer_key,
                                size_t peer_key_length,
                                psa_algorithm_t alg,
                                const psa_key_attributes_t *attributes,
-                               psa_key_id_t *key);
+                               wolfpsa_svc_key_id_t *key);
 
 /* PSA 1.4: KEM encapsulate/decapsulate (e.g. ML-KEM). */
 psa_status_t psa_encapsulate(psa_key_id_t key,
@@ -552,13 +552,13 @@ psa_status_t psa_generate_random(uint8_t *output,
                                  size_t output_size);
 
 psa_status_t psa_generate_key(const psa_key_attributes_t *attributes,
-                              psa_key_id_t *key);
+                              wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_generate_key_custom(const psa_key_attributes_t *attributes,
                                      const psa_custom_key_parameters_t *custom,
                                      const uint8_t *custom_data,
                                      size_t custom_data_length,
-                                     psa_key_id_t *key);
+                                     wolfpsa_svc_key_id_t *key);
 
 /* PSA 1.4: key wrapping and hardware-bound key attachment. */
 psa_status_t psa_wrap_key(psa_key_id_t wrapping_key,
@@ -593,7 +593,7 @@ uint32_t psa_verify_hash_get_num_ops(
 
 psa_status_t psa_sign_hash_start(
     psa_sign_hash_interruptible_operation_t *operation,
-    psa_key_id_t key, psa_algorithm_t alg,
+    wolfpsa_svc_key_id_t key, psa_algorithm_t alg,
     const uint8_t *hash, size_t hash_length);
 
 psa_status_t psa_sign_hash_complete(
@@ -606,7 +606,7 @@ psa_status_t psa_sign_hash_abort(
 
 psa_status_t psa_verify_hash_start(
     psa_verify_hash_interruptible_operation_t *operation,
-    psa_key_id_t key, psa_algorithm_t alg,
+    wolfpsa_svc_key_id_t key, psa_algorithm_t alg,
     const uint8_t *hash, size_t hash_length,
     const uint8_t *signature, size_t signature_length);
 
@@ -621,7 +621,7 @@ uint32_t psa_key_agreement_iop_get_num_ops(psa_key_agreement_iop_t *operation);
 
 psa_status_t psa_key_agreement_iop_setup(
     psa_key_agreement_iop_t *operation,
-    psa_key_id_t private_key,
+    wolfpsa_svc_key_id_t private_key,
     const uint8_t *peer_key,
     size_t peer_key_length,
     psa_algorithm_t alg,
@@ -629,7 +629,7 @@ psa_status_t psa_key_agreement_iop_setup(
 
 psa_status_t psa_key_agreement_iop_complete(
     psa_key_agreement_iop_t *operation,
-    psa_key_id_t *key);
+    wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_key_agreement_iop_abort(
     psa_key_agreement_iop_t *operation);
@@ -641,13 +641,13 @@ psa_status_t psa_generate_key_iop_setup(
 
 psa_status_t psa_generate_key_iop_complete(
     psa_generate_key_iop_t *operation,
-    psa_key_id_t *key);
+    wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_generate_key_iop_abort(
     psa_generate_key_iop_t *operation);
 uint32_t psa_export_public_key_iop_get_num_ops(psa_export_public_key_iop_t *operation);
 psa_status_t psa_export_public_key_iop_setup(psa_export_public_key_iop_t *operation,
-                                             psa_key_id_t key);
+                                             wolfpsa_svc_key_id_t key);
 
 psa_status_t psa_export_public_key_iop_complete(psa_export_public_key_iop_t *operation,
                                                 uint8_t *data,
@@ -669,7 +669,7 @@ void psa_pake_cs_set_key_confirmation(psa_pake_cipher_suite_t *cipher_suite,
 
 psa_pake_operation_t psa_pake_operation_init(void);
 psa_status_t psa_pake_setup(psa_pake_operation_t *operation,
-                            psa_key_id_t password_key,
+                            wolfpsa_svc_key_id_t password_key,
                             const psa_pake_cipher_suite_t *cipher_suite);
 psa_status_t psa_pake_set_role(psa_pake_operation_t *operation,
                                psa_pake_role_t role);
@@ -693,6 +693,6 @@ psa_status_t psa_pake_input(psa_pake_operation_t *operation,
                             size_t input_length);
 psa_status_t psa_pake_get_shared_key(psa_pake_operation_t *operation,
                                      const psa_key_attributes_t *attributes,
-                                     psa_key_id_t *key);
+                                     wolfpsa_svc_key_id_t *key);
 psa_status_t psa_pake_abort(psa_pake_operation_t *operation);
 #endif 

@@ -198,13 +198,13 @@ struct psa_key_attributes_s {
     psa_key_bits_t bits;
     psa_key_lifetime_t lifetime;
     psa_key_policy_t policy;
-    psa_key_id_t id;
+    wolfpsa_svc_key_id_t id;
 };
 
 #define PSA_KEY_ATTRIBUTES_INIT { PSA_KEY_TYPE_NONE, 0,            \
                                   PSA_KEY_LIFETIME_VOLATILE,       \
                                   PSA_KEY_POLICY_INIT,             \
-                                  PSA_KEY_ID_NULL }
+                                  WOLFPSA_SVC_KEY_ID_INIT }
 
 static inline psa_key_attributes_t psa_key_attributes_init(void)
 {
@@ -213,7 +213,7 @@ static inline psa_key_attributes_t psa_key_attributes_init(void)
 }
 
 static inline void psa_set_key_id(psa_key_attributes_t *attributes,
-                                  psa_key_id_t key)
+                                  wolfpsa_svc_key_id_t key)
 {
     psa_key_lifetime_t lifetime = attributes->lifetime;
 
@@ -226,17 +226,31 @@ static inline void psa_set_key_id(psa_key_attributes_t *attributes,
     }
 }
 
-static inline psa_key_id_t psa_get_key_id(const psa_key_attributes_t *attributes)
+static inline wolfpsa_svc_key_id_t psa_get_key_id(
+    const psa_key_attributes_t *attributes)
 {
     return attributes->id;
 }
+
+#if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)
+/* Lets a service stamp the calling client onto attributes it decoded from that
+ * client, which must not be trusted to set its own owner. */
+static inline void wolfpsa_set_key_owner_id(psa_key_attributes_t *attributes,
+                                             wolfpsa_key_owner_id_t owner)
+{
+    attributes->id.owner = owner;
+}
+#endif
 
 static inline void psa_set_key_lifetime(psa_key_attributes_t *attributes,
                                         psa_key_lifetime_t lifetime)
 {
     attributes->lifetime = lifetime;
     if (PSA_KEY_LIFETIME_IS_VOLATILE(lifetime)) {
-        attributes->id = PSA_KEY_ID_NULL;
+        /* Clear the id but keep the owner: the key is still that client's. */
+        attributes->id = wolfpsa_svc_key_id_make(
+                             WOLFPSA_SVC_KEY_ID_GET_OWNER_ID(attributes->id),
+                             PSA_KEY_ID_NULL);
     }
 }
 
