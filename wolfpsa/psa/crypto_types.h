@@ -45,6 +45,8 @@ typedef uint8_t psa_pake_primitive_type_t;
 typedef uint8_t psa_pake_family_t;
 typedef uint8_t psa_pake_role_t;
 typedef uint8_t psa_pake_step_t;
+/* PSA driver interface: platform key providers name a slot. */
+typedef uint64_t psa_drv_slot_number_t;
 
 /* Per-client key namespaces for multi-client services. Off: plain psa_key_id_t. */
 #if defined(WOLFPSA_KEY_ID_ENCODES_OWNER)

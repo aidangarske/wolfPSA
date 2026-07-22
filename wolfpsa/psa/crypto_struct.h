@@ -33,7 +33,12 @@ extern "C" {
 #endif
 
 typedef struct psa_hash_operation_s {
+#if !defined(WOLFPSA_CRYPTO_CLIENT_SERVER) || defined(WOLFPSA_CRYPTO_SERVER)
     uintptr_t opaque;
+#endif
+#if defined(WOLFPSA_CRYPTO_CLIENT_SERVER)
+    uint32_t handle;  /* IPC handle; sole member client-side so sizeof == uint32_t */
+#endif
 } psa_hash_operation_t;
 #define PSA_HASH_OPERATION_INIT { 0 }
 static inline psa_hash_operation_t psa_hash_operation_init(void)
@@ -53,7 +58,12 @@ static inline psa_xof_operation_t psa_xof_operation_init(void)
 }
 
 typedef struct psa_cipher_operation_s {
+#if !defined(WOLFPSA_CRYPTO_CLIENT_SERVER) || defined(WOLFPSA_CRYPTO_SERVER)
     uintptr_t opaque;
+#endif
+#if defined(WOLFPSA_CRYPTO_CLIENT_SERVER)
+    uint32_t handle;  /* IPC handle; sole member client-side so sizeof == uint32_t */
+#endif
 } psa_cipher_operation_t;
 #define PSA_CIPHER_OPERATION_INIT { 0 }
 static inline psa_cipher_operation_t psa_cipher_operation_init(void)
@@ -63,7 +73,12 @@ static inline psa_cipher_operation_t psa_cipher_operation_init(void)
 }
 
 typedef struct psa_mac_operation_s {
+#if !defined(WOLFPSA_CRYPTO_CLIENT_SERVER) || defined(WOLFPSA_CRYPTO_SERVER)
     uintptr_t opaque;
+#endif
+#if defined(WOLFPSA_CRYPTO_CLIENT_SERVER)
+    uint32_t handle;  /* IPC handle; sole member client-side so sizeof == uint32_t */
+#endif
 } psa_mac_operation_t;
 #define PSA_MAC_OPERATION_INIT { 0 }
 static inline psa_mac_operation_t psa_mac_operation_init(void)
@@ -73,7 +88,12 @@ static inline psa_mac_operation_t psa_mac_operation_init(void)
 }
 
 typedef struct psa_aead_operation_s {
+#if !defined(WOLFPSA_CRYPTO_CLIENT_SERVER) || defined(WOLFPSA_CRYPTO_SERVER)
     uintptr_t opaque;
+#endif
+#if defined(WOLFPSA_CRYPTO_CLIENT_SERVER)
+    uint32_t handle;  /* IPC handle; sole member client-side so sizeof == uint32_t */
+#endif
 } psa_aead_operation_t;
 #define PSA_AEAD_OPERATION_INIT { 0 }
 static inline psa_aead_operation_t psa_aead_operation_init(void)
@@ -83,7 +103,12 @@ static inline psa_aead_operation_t psa_aead_operation_init(void)
 }
 
 typedef struct psa_key_derivation_s {
+#if !defined(WOLFPSA_CRYPTO_CLIENT_SERVER) || defined(WOLFPSA_CRYPTO_SERVER)
     uintptr_t opaque;
+#endif
+#if defined(WOLFPSA_CRYPTO_CLIENT_SERVER)
+    uint32_t handle;  /* IPC handle; sole member client-side so sizeof == uint32_t */
+#endif
 } psa_key_derivation_operation_t;
 #define PSA_KEY_DERIVATION_OPERATION_INIT { 0 }
 static inline psa_key_derivation_operation_t psa_key_derivation_operation_init(void)

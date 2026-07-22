@@ -668,6 +668,12 @@
 #define PSA_ALG_HKDF_GET_HASH(hkdf_alg)                         \
     (PSA_ALG_CATEGORY_HASH | ((hkdf_alg) & PSA_ALG_HASH_MASK))
 
+/* NIST SP800-108 Counter mode CMAC. Declared for spec completeness; wolfPSA
+ * does not yet implement it, so psa_key_derivation_setup returns unsupported. */
+#define PSA_ALG_SP800_108_COUNTER_CMAC          ((psa_algorithm_t) 0x08000800)
+#define PSA_ALG_IS_SP800_108_COUNTER_CMAC(alg)                  \
+    ((alg) == PSA_ALG_SP800_108_COUNTER_CMAC)
+
 #define PSA_ALG_HKDF_EXTRACT_BASE                       ((psa_algorithm_t) 0x08000400)
 
 #define PSA_ALG_HKDF_EXTRACT(hash_alg)                                  \
@@ -981,6 +987,9 @@ static inline int wolfpsa_svc_key_id_is_null(wolfpsa_svc_key_id_t key)
 
 
 #define PSA_KEY_DERIVATION_INPUT_COST       ((psa_key_derivation_step_t) 0x0205)
+
+
+#define PSA_KEY_DERIVATION_INPUT_CONTEXT    ((psa_key_derivation_step_t) 0x0206)
 
 
 

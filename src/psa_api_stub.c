@@ -412,3 +412,21 @@ void psa_reset_key_attributes(psa_key_attributes_t *attributes) {
 
     *attributes = psa_key_attributes_init();
 }
+
+int psa_can_do_hash(psa_algorithm_t hash_alg)
+{
+    psa_hash_operation_t op = PSA_HASH_OPERATION_INIT;
+    int ok = 0;
+
+    if (psa_hash_setup(&op, hash_alg) == PSA_SUCCESS) {
+        (void)psa_hash_abort(&op);
+        ok = 1;
+    }
+    return ok;
+}
+
+int psa_can_do_cipher(psa_key_type_t key_type, psa_algorithm_t cipher_alg)
+{
+    (void)key_type;
+    return PSA_ALG_IS_CIPHER(cipher_alg);
+}

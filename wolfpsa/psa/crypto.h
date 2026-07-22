@@ -102,6 +102,10 @@ psa_status_t psa_purge_key(wolfpsa_svc_key_id_t key);
 psa_status_t psa_check_key_usage(wolfpsa_svc_key_id_t key,
                                  psa_algorithm_t alg,
                                  psa_key_usage_t usage);
+/* Capability probes used by the Arm PSA arch tests and TF-M's crypto tests.
+ * Not part of the PSA Crypto spec. */
+int psa_can_do_hash(psa_algorithm_t hash_alg);
+int psa_can_do_cipher(psa_key_type_t key_type, psa_algorithm_t cipher_alg);
 
 psa_status_t psa_copy_key(wolfpsa_svc_key_id_t source_key,
                           const psa_key_attributes_t *attributes,
