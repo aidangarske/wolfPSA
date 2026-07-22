@@ -364,8 +364,11 @@ static psa_status_t wolfpsa_kdf_validate_step(wolfpsa_kdf_ctx_t *ctx,
         return PSA_SUCCESS;
     }
     else if (PSA_ALG_IS_TLS12_PSK_TO_MS(ctx->alg)) {
+        /* Accept the label like mbedtls (it is fixed to "master secret" and
+         * ignored); rejecting it would break TLS12_PSK_TO_MS conformance. */
         if (step != PSA_KEY_DERIVATION_INPUT_SECRET &&
             step != PSA_KEY_DERIVATION_INPUT_OTHER_SECRET &&
+            step != PSA_KEY_DERIVATION_INPUT_LABEL &&
             step != PSA_KEY_DERIVATION_INPUT_SEED) {
             return PSA_ERROR_INVALID_ARGUMENT;
         }
