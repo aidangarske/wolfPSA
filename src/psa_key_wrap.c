@@ -41,9 +41,9 @@
  * enforces PSA_KEY_USAGE_EXPORT on the target key), then encrypts it with
  * the wrapping key using wc_AesKeyWrap().
  */
-psa_status_t psa_wrap_key(psa_key_id_t wrapping_key,
+psa_status_t psa_wrap_key(wolfpsa_svc_key_id_t wrapping_key,
                            psa_algorithm_t alg,
-                           psa_key_id_t key,
+                           wolfpsa_svc_key_id_t key,
                            uint8_t *data,
                            size_t data_size,
                            size_t *data_length)
@@ -64,7 +64,8 @@ psa_status_t psa_wrap_key(psa_key_id_t wrapping_key,
 #endif
 
     wolfpsa_trace("psa_wrap_key(wrapping_key=%u alg=0x%08x key=%u)",
-                  (unsigned)wrapping_key, (unsigned)alg, (unsigned)key);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(wrapping_key),
+                  (unsigned)alg, (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key));
 
     /* Validate output pointers */
     if (data == NULL || data_length == NULL) {
@@ -195,11 +196,11 @@ psa_status_t psa_wrap_key(psa_key_id_t wrapping_key,
  * plaintext as a new key via psa_import_key().
  */
 psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
-                             psa_key_id_t wrapping_key,
+                             wolfpsa_svc_key_id_t wrapping_key,
                              psa_algorithm_t alg,
                              const uint8_t *data,
                              size_t data_length,
-                             psa_key_id_t *key)
+                             wolfpsa_svc_key_id_t *key)
 {
 #ifdef HAVE_AES_KEYWRAP
     psa_status_t status;
@@ -215,14 +216,15 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 #endif
 
     wolfpsa_trace("psa_unwrap_key(wrapping_key=%u alg=0x%08x data_len=%zu)",
-                  (unsigned)wrapping_key, (unsigned)alg, data_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(wrapping_key),
+                  (unsigned)alg, data_length);
 
     /* Validate pointers */
     if (attributes == NULL || data == NULL || key == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    *key = PSA_KEY_ID_NULL;
+    *key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
 
     /* Only key-wrap category algorithms are accepted */
     if (!PSA_ALG_IS_KEY_WRAP(alg)) {
@@ -308,7 +310,7 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
     XFREE(plaintext, NULL, DYNAMIC_TYPE_TMP_BUFFER);
 
     if (status != PSA_SUCCESS) {
-        *key = PSA_KEY_ID_NULL;
+        *key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
     }
 
     return status;

@@ -1230,14 +1230,15 @@ psa_status_t psa_import_key(
          * for an existing record before opening a write handle, otherwise the
          * atomic rename in wolfPSA_Store_Close() would silently destroy the
          * previously stored key. */
-        ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY, (unsigned long)*key_id, 0,
+        ret = wolfPSA_Store_Open(WOLFPSA_STORE_KEY,
+                                 (unsigned long)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(*key_id), 0,
                                  1, &store);
         if (ret == 0) {
             wolfPSA_Store_Close(store);
             store = NULL;
             wc_ForceZero(buffer, buffer_size);
             XFREE(buffer, NULL, DYNAMIC_TYPE_TMP_BUFFER);
-            *key_id = PSA_KEY_ID_NULL;
+            *key_id = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
             return PSA_ERROR_ALREADY_EXISTS;
         }
 
@@ -1256,7 +1257,7 @@ psa_status_t psa_import_key(
     XFREE(buffer, NULL, DYNAMIC_TYPE_TMP_BUFFER);
 
     if (status != PSA_SUCCESS) {
-        *key_id = PSA_KEY_ID_NULL;
+        *key_id = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
         return status;
     }
     
@@ -2233,7 +2234,7 @@ psa_status_t psa_copy_key(
  *    concrete hash-and-sign algorithm of the same base family.
  *  - No key material is loaded.
  */
-psa_status_t psa_check_key_usage(psa_key_id_t key,
+psa_status_t psa_check_key_usage(wolfpsa_svc_key_id_t key,
                                  psa_algorithm_t alg,
                                  psa_key_usage_t usage)
 {
@@ -2243,7 +2244,8 @@ psa_status_t psa_check_key_usage(psa_key_id_t key,
     psa_algorithm_t key_alg;
 
     wolfpsa_trace("psa_check_key_usage(key=%u alg=0x%08x usage=0x%08x)",
-                  (unsigned)key, (unsigned)alg, (unsigned)usage);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg,
+                  (unsigned)usage);
 
     status = psa_get_key_attributes(key, &attributes);
     if (status != PSA_SUCCESS) {

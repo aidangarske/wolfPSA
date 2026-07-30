@@ -136,7 +136,7 @@ psa_status_t psa_purge_key(wolfpsa_svc_key_id_t key) {
 psa_status_t psa_attach_key(const psa_key_attributes_t *attributes,
                              const uint8_t *label,
                              size_t label_length,
-                             psa_key_id_t *key) {
+                             wolfpsa_svc_key_id_t *key) {
     (void)attributes;
     (void)label;
     (void)label_length;
@@ -182,7 +182,7 @@ uint32_t psa_interruptible_get_max_ops(void) {
 
 psa_status_t psa_sign_hash_start(
     psa_sign_hash_interruptible_operation_t *operation,
-    psa_key_id_t key, psa_algorithm_t alg,
+    wolfpsa_svc_key_id_t key, psa_algorithm_t alg,
     const uint8_t *hash, size_t hash_length) {
     (void)operation;
     (void)key;
@@ -220,7 +220,7 @@ uint32_t psa_sign_hash_get_num_ops(
 
 psa_status_t psa_verify_hash_start(
     psa_verify_hash_interruptible_operation_t *operation,
-    psa_key_id_t key, psa_algorithm_t alg,
+    wolfpsa_svc_key_id_t key, psa_algorithm_t alg,
     const uint8_t *hash, size_t hash_length,
     const uint8_t *signature, size_t signature_length) {
     (void)operation;
@@ -258,7 +258,7 @@ uint32_t psa_verify_hash_get_num_ops(
 
 psa_status_t psa_key_agreement_iop_setup(
     psa_key_agreement_iop_t *operation,
-    psa_key_id_t private_key,
+    wolfpsa_svc_key_id_t private_key,
     const uint8_t *peer_key,
     size_t peer_key_length,
     psa_algorithm_t alg,
@@ -274,7 +274,7 @@ psa_status_t psa_key_agreement_iop_setup(
 
 psa_status_t psa_key_agreement_iop_complete(
     psa_key_agreement_iop_t *operation,
-    psa_key_id_t *key) {
+    wolfpsa_svc_key_id_t *key) {
     (void)operation;
     (void)key;
     return wolfPSA_StubNotSupported();
@@ -306,7 +306,7 @@ psa_status_t psa_generate_key_iop_setup(
 
 psa_status_t psa_generate_key_iop_complete(
     psa_generate_key_iop_t *operation,
-    psa_key_id_t *key) {
+    wolfpsa_svc_key_id_t *key) {
     (void)operation;
     (void)key;
     return wolfPSA_StubNotSupported();
@@ -330,7 +330,7 @@ uint32_t psa_generate_key_iop_get_num_ops(psa_generate_key_iop_t *operation) {
 
 psa_status_t psa_export_public_key_iop_setup(
     psa_export_public_key_iop_t *operation,
-    psa_key_id_t key) {
+    wolfpsa_svc_key_id_t key) {
     (void)operation;
     (void)key;
     return wolfPSA_StubNotSupported();
@@ -369,7 +369,7 @@ psa_status_t psa_generate_key_custom(const psa_key_attributes_t *attributes,
                                       const psa_custom_key_parameters_t *custom,
                                       const uint8_t *custom_data,
                                       size_t custom_data_length,
-                                      psa_key_id_t *key) {
+                                      wolfpsa_svc_key_id_t *key) {
     if (custom == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
@@ -390,7 +390,7 @@ psa_status_t psa_key_derivation_output_key_custom(
     const psa_custom_key_parameters_t *custom,
     const uint8_t *custom_data,
     size_t custom_data_length,
-    psa_key_id_t *key) {
+    wolfpsa_svc_key_id_t *key) {
     if (custom == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }

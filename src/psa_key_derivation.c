@@ -48,7 +48,7 @@
  * enforcing the private key's full key-agreement policy (base algorithm and
  * embedded KDF), not just the base algorithm. */
 extern psa_status_t wolfpsa_key_agreement_secret(psa_algorithm_t alg,
-                                                 psa_key_id_t private_key,
+                                                 wolfpsa_svc_key_id_t private_key,
                                                  const uint8_t *peer_key,
                                                  size_t peer_key_length,
                                                  uint8_t *output,

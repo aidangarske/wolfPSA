@@ -537,20 +537,20 @@ psa_status_t psa_key_agreement(wolfpsa_svc_key_id_t private_key,
                                wolfpsa_svc_key_id_t *key);
 
 /* PSA 1.4: KEM encapsulate/decapsulate (e.g. ML-KEM). */
-psa_status_t psa_encapsulate(psa_key_id_t key,
+psa_status_t psa_encapsulate(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const psa_key_attributes_t *attributes,
-                             psa_key_id_t *output_key,
+                             wolfpsa_svc_key_id_t *output_key,
                              uint8_t *ciphertext,
                              size_t ciphertext_size,
                              size_t *ciphertext_length);
 
-psa_status_t psa_decapsulate(psa_key_id_t key,
+psa_status_t psa_decapsulate(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *ciphertext,
                              size_t ciphertext_length,
                              const psa_key_attributes_t *attributes,
-                             psa_key_id_t *output_key);
+                             wolfpsa_svc_key_id_t *output_key);
 
 psa_status_t psa_generate_random(uint8_t *output,
                                  size_t output_size);
@@ -565,24 +565,24 @@ psa_status_t psa_generate_key_custom(const psa_key_attributes_t *attributes,
                                      wolfpsa_svc_key_id_t *key);
 
 /* PSA 1.4: key wrapping and hardware-bound key attachment. */
-psa_status_t psa_wrap_key(psa_key_id_t wrapping_key,
+psa_status_t psa_wrap_key(wolfpsa_svc_key_id_t wrapping_key,
                           psa_algorithm_t alg,
-                          psa_key_id_t key,
+                          wolfpsa_svc_key_id_t key,
                           uint8_t *data,
                           size_t data_size,
                           size_t *data_length);
 
 psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
-                            psa_key_id_t wrapping_key,
+                            wolfpsa_svc_key_id_t wrapping_key,
                             psa_algorithm_t alg,
                             const uint8_t *data,
                             size_t data_length,
-                            psa_key_id_t *key);
+                            wolfpsa_svc_key_id_t *key);
 
 psa_status_t psa_attach_key(const psa_key_attributes_t *attributes,
                             const uint8_t *label,
                             size_t label_length,
-                            psa_key_id_t *key);
+                            wolfpsa_svc_key_id_t *key);
 
 
 void psa_interruptible_set_max_ops(uint32_t max_ops);

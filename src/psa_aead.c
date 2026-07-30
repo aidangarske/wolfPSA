@@ -886,7 +886,7 @@ psa_status_t psa_aead_verify(psa_aead_operation_t *operation,
 /* One-shot encrypt for XChaCha20-Poly1305.
  * ciphertext = plaintext || tag (16-byte Poly1305 tag appended). */
 static psa_status_t wolfpsa_xchacha_oneshot_encrypt(
-    psa_key_id_t key,
+    wolfpsa_svc_key_id_t key,
     psa_algorithm_t alg,
     const uint8_t *nonce, size_t nonce_length,
     const uint8_t *additional_data, size_t additional_data_length,
@@ -972,7 +972,7 @@ static psa_status_t wolfpsa_xchacha_oneshot_encrypt(
 /* One-shot decrypt for XChaCha20-Poly1305.
  * ciphertext = ciphertext_body || tag (16-byte Poly1305 tag appended). */
 static psa_status_t wolfpsa_xchacha_oneshot_decrypt(
-    psa_key_id_t key,
+    wolfpsa_svc_key_id_t key,
     psa_algorithm_t alg,
     const uint8_t *nonce, size_t nonce_length,
     const uint8_t *additional_data, size_t additional_data_length,
@@ -1062,7 +1062,7 @@ static psa_status_t wolfpsa_xchacha_oneshot_decrypt(
 /* One-shot encrypt for Ascon-AEAD128.
  * ciphertext = encrypted_body || tag (16-byte tag appended). */
 static psa_status_t wolfpsa_ascon_oneshot_encrypt(
-    psa_key_id_t key,
+    wolfpsa_svc_key_id_t key,
     psa_algorithm_t alg,
     const uint8_t *nonce, size_t nonce_length,
     const uint8_t *additional_data, size_t additional_data_length,
@@ -1168,7 +1168,7 @@ static psa_status_t wolfpsa_ascon_oneshot_encrypt(
 /* One-shot decrypt for Ascon-AEAD128.
  * ciphertext = encrypted_body || tag (16-byte tag appended). */
 static psa_status_t wolfpsa_ascon_oneshot_decrypt(
-    psa_key_id_t key,
+    wolfpsa_svc_key_id_t key,
     psa_algorithm_t alg,
     const uint8_t *nonce, size_t nonce_length,
     const uint8_t *additional_data, size_t additional_data_length,

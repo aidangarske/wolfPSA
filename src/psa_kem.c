@@ -74,10 +74,10 @@ static psa_status_t wolfpsa_kem_check_alg(psa_algorithm_t alg)
     return PSA_ERROR_INVALID_ARGUMENT;
 }
 
-psa_status_t psa_encapsulate(psa_key_id_t key,
+psa_status_t psa_encapsulate(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const psa_key_attributes_t *attributes,
-                             psa_key_id_t *output_key,
+                             wolfpsa_svc_key_id_t *output_key,
                              uint8_t *ciphertext,
                              size_t ciphertext_size,
                              size_t *ciphertext_length)
@@ -97,7 +97,7 @@ psa_status_t psa_encapsulate(psa_key_id_t key,
     size_t ct_len = 0;
 
     wolfpsa_trace("psa_encapsulate(key=%u alg=0x%08x)",
-                  (unsigned)key, (unsigned)alg);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg);
 
     /* --- Argument validation --- */
     if (output_key == NULL || ciphertext == NULL ||
@@ -105,7 +105,7 @@ psa_status_t psa_encapsulate(psa_key_id_t key,
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    *output_key = PSA_KEY_ID_NULL;
+    *output_key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
     *ciphertext_length = 0;
 
     status = wolfpsa_kem_check_alg(alg);
@@ -181,7 +181,7 @@ psa_status_t psa_encapsulate(psa_key_id_t key,
     wc_ForceZero(ss, sizeof(ss));
 
     if (status != PSA_SUCCESS) {
-        *output_key = PSA_KEY_ID_NULL;
+        *output_key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
         return status;
     }
 
@@ -192,12 +192,12 @@ psa_status_t psa_encapsulate(psa_key_id_t key,
     return PSA_SUCCESS;
 }
 
-psa_status_t psa_decapsulate(psa_key_id_t key,
+psa_status_t psa_decapsulate(wolfpsa_svc_key_id_t key,
                              psa_algorithm_t alg,
                              const uint8_t *ciphertext,
                              size_t ciphertext_length,
                              const psa_key_attributes_t *attributes,
-                             psa_key_id_t *output_key)
+                             wolfpsa_svc_key_id_t *output_key)
 {
     psa_key_attributes_t key_attr;
     uint8_t *key_data = NULL;
@@ -210,14 +210,14 @@ psa_status_t psa_decapsulate(psa_key_id_t key,
     uint8_t ss[WOLFPSA_MLKEM_SS_SIZE];
 
     wolfpsa_trace("psa_decapsulate(key=%u alg=0x%08x ct_len=%zu)",
-                  (unsigned)key, (unsigned)alg, ciphertext_length);
+                  (unsigned)WOLFPSA_SVC_KEY_ID_GET_KEY_ID(key), (unsigned)alg, ciphertext_length);
 
     /* --- Argument validation --- */
     if (output_key == NULL || ciphertext == NULL || attributes == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    *output_key = PSA_KEY_ID_NULL;
+    *output_key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
 
     status = wolfpsa_kem_check_alg(alg);
     if (status != PSA_SUCCESS) {
@@ -287,7 +287,7 @@ psa_status_t psa_decapsulate(psa_key_id_t key,
     wc_ForceZero(ss, sizeof(ss));
 
     if (status != PSA_SUCCESS) {
-        *output_key = PSA_KEY_ID_NULL;
+        *output_key = wolfpsa_svc_key_id_make(0, PSA_KEY_ID_NULL);
         return status;
     }
 
