@@ -25,6 +25,9 @@
 #include <stddef.h>
 
 #define WOLFPSA_STORE_KEY            0x00
+/* Internal Trusted Storage records; kept distinct from keys so a uid cannot
+ * collide with a key id in the backend's (type, id1, id2) namespace. */
+#define WOLFPSA_STORE_ITS            0x01
 
 /*
  * Opens access to location to read/write PSA data.

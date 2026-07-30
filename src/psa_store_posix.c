@@ -275,6 +275,10 @@ static int wolfPSA_Store_Name(int type, unsigned long id1, unsigned long id2,
             ret = XSNPRINTF(name, nameLen, "%s/psa_key_%016lx_%016lx", str,
                     id1, id2);
             break;
+        case WOLFPSA_STORE_ITS:
+            ret = XSNPRINTF(name, nameLen, "%s/psa_its_%016lx_%016lx", str,
+                    id1, id2);
+            break;
         default:
             ret = -1;
             break;
