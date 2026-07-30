@@ -64,9 +64,18 @@ int main(void)
     st = psa_its_get(0x1001, 0, sizeof(out), out, &got);
     CHECK(st == PSA_ERROR_DOES_NOT_EXIST, "removed record is gone");
 
-    /* WRITE_ONCE cannot be replaced or removed */
-    st = psa_its_set(0x1002, 8, in, PSA_STORAGE_FLAG_WRITE_ONCE);
-    CHECK(st == PSA_SUCCESS, "set write-once");
+    /* WRITE_ONCE cannot be replaced or removed. A record left by an earlier
+     * run cannot be cleaned up either -- that is the property under test --
+     * so treat an existing one as the precondition rather than re-creating
+     * it, otherwise the suite only passes on a pristine store. */
+    if ((psa_its_get_info(0x1002, &info) == PSA_SUCCESS) &&
+        ((info.flags & PSA_STORAGE_FLAG_WRITE_ONCE) != 0u)) {
+        printf("  PASS: set write-once (record persists from an earlier run)\n");
+    }
+    else {
+        st = psa_its_set(0x1002, 8, in, PSA_STORAGE_FLAG_WRITE_ONCE);
+        CHECK(st == PSA_SUCCESS, "set write-once");
+    }
     st = psa_its_set(0x1002, 8, in, PSA_STORAGE_FLAG_NONE);
     CHECK(st == PSA_ERROR_NOT_PERMITTED, "write-once overwrite refused");
     st = psa_its_remove(0x1002);
