@@ -332,6 +332,12 @@ so the change that adds a feature also marks its cases pass.
   leaves the parts that fail in `.rej` files; fix them, then save the
   patch.
 
+`WOLFPSA_AEAD_BORROW` lets one-shot GCM and CCM read the caller's AAD and
+message in place instead of copying them, which saves a message-sized buffer.
+Define it only when nothing else can change those buffers during the call,
+for example a Secure service whose inputs sit in its own memory. Outputs that
+partly overlap the input or overlap the AAD still take the copying path.
+
 ## Testing (PSA Architecture Test Suite)
 
 See `test-psa-api/README.md` for instructions on how to run the tests.
