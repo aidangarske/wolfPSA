@@ -29,8 +29,9 @@
     defined(WOLFSSL_AES_DIRECT)
 
 /* One-shot AES-CCM on wolfPSA's streaming CCM, for code built into the same
- * image that would otherwise link wolfCrypt's one-shot CCM too. They run in
- * software, touch no wolfPSA state, and return 0, BAD_FUNC_ARG,
+ * image that would otherwise link wolfCrypt's one-shot CCM too. They pass
+ * INVALID_DEVID, so only a WOLF_CRYPTO_CB_FIND callback can see them, touch
+ * no wolfPSA state, and return 0, BAD_FUNC_ARG,
  * AES_CCM_AUTH_E for a tag mismatch (the output is then zeroed),
  * NOT_COMPILED_IN when PSA_WANT_WITHOUT drops CCM, or a wolfCrypt error. */
 WOLFSSL_LOCAL int wolfPSA_AesCcmEncrypt(const byte* key, word32 keySz,
